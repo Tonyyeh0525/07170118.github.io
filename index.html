@@ -19,18 +19,6 @@
 }
 </style>
 
-<!-- Google Analytics -->
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-160193753-1', 'auto');
-ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
-
 </head>
 
 <body>
@@ -78,6 +66,64 @@ delay(document.getElementById('001'), function() {ga('send','event','年終促�
 
 </script>
 
+
+<div id="player"></div>
+
+<script>
+
+window.onbeforeunload = sendVideoWatchedTime;
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+function onYouTubeIframeAPIReady() {
+player = new YT.Player('player', {
+height: '150',   //此處可修改影片高度
+width: '200',   //此處可修改影片寬度
+videoId: 'ES73LXd4LGg',  //記得將此處修改為自己的影片ID
+events: {
+'onStateChange': onPlayerStateChange }});}
+
+　
+
+//此處為影片播放行為捕捉的程式碼
+
+function onPlayerStateChange(event) {   
+if (event.data == YT.PlayerState.PLAYING) {
+console.log('play');
+ga('send', 'event', '去外商公司工作英文要多好? ', '撥放Play');
+}
+
+
+//此處為影片暫停行為捕捉的程式碼
+
+if (event.data == YT.PlayerState.PAUSED) { 
+console.log('paused, total: ' + player.getCurrentTime());
+ga('send', 'event', '去外商公司工作英文要多好? ', '暫停Pause', '於幾秒處按下暫停鍵: ' + Math.round(player.getCurrentTime()));
+}
+
+//此處為影片收視完畢行為捕捉的程式碼
+
+if (event.data == YT.PlayerState.ENDED) {
+console.log('video ended');
+ga('send', 'event', '去外商公司工作英文要多好? ', '收視完畢Ended')
+}}
+
+　
+
+//此處為影片沒看完跳離頁面行為捕捉的程式碼
+
+function sendVideoWatchedTime() {   
+console.log('leaving... watched: ' + player.getCurrentTime() + 'seconds');
+ga('send', 'event', '去外商公司工作英文要多好? ', '沒看完跳離頁面', '於幾秒處關閉瀏覽器: ' + Math.round(player.getCurrentTime()));
+}
+</script>
+
+
 </body>
 
 </html>
+
+
